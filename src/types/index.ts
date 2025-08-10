@@ -1,3 +1,10 @@
+export interface User {
+  uid: string;
+  email: string | null;
+  fullName: string;
+  role: 'Buyer' | 'Supplier';
+}
+
 export interface Product {
   id: string;
   name: string;
