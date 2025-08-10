@@ -39,7 +39,7 @@ export default function SignInForm() {
     console.log(values);
     toast({
       title: 'Sign In Successful!',
-      description: 'Welcome back to M-MARKET PLUS SHOPPER!',
+      description: 'Welcome back to M-Market + Shopper!',
     });
     form.reset();
   }

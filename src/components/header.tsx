@@ -30,7 +30,7 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center">
-        <div className="md:hidden">
+        <div className="flex items-center md:hidden">
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon">
@@ -40,14 +40,19 @@ export default function Header() {
             </SheetTrigger>
             <SheetContent side="left">
               <SheetHeader>
-                <SheetTitle className="sr-only">Menu</SheetTitle>
+                <SheetTitle>
+                  <Link
+                    href="/"
+                    className="mr-6 flex items-center space-x-2 mb-6"
+                  >
+                    <Logo className="h-8 w-8" />
+                    <span className="font-bold font-headline">
+                      M-Market + Shopper
+                    </span>
+                  </Link>
+                </SheetTitle>
               </SheetHeader>
-              <Link href="/" className="mr-6 flex items-center space-x-2 mb-6">
-                <Logo className="h-8 w-8" />
-                <span className="font-bold font-headline">
-                  M-Market + Shopper
-                </span>
-              </Link>
+
               <nav className="flex flex-col space-y-4">
                 {navLinks.map((link) => (
                   <Link
