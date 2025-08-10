@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Menu, ShoppingBasket, Star } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 import { DialogTitle } from '@radix-ui/react-dialog';
+import Logo from './logo';
 
 const navLinks = [
   { href: '/', label: 'Marketplace' },
@@ -30,10 +31,7 @@ export default function Header() {
       <div className="container flex h-16 items-center">
         <div className="mr-4 hidden md:flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
-            <div className="relative">
-              <ShoppingBasket className="h-6 w-6 text-primary" />
-              <Star className="h-4 w-4 text-primary absolute -top-1 -right-1" />
-            </div>
+            <Logo className="h-8 w-8" />
             <span className="hidden font-bold sm:inline-block font-headline">
               M-MARKET PLUS SHOPPER
             </span>
@@ -68,10 +66,7 @@ export default function Header() {
                   <SheetTitle className="sr-only">Menu</SheetTitle>
                 </SheetHeader>
                 <Link href="/" className="mr-6 flex items-center space-x-2 mb-6">
-                  <div className="relative">
-                    <ShoppingBasket className="h-6 w-6 text-primary" />
-                    <Star className="h-4 w-4 text-primary absolute -top-1 -right-1" />
-                  </div>
+                  <Logo className="h-8 w-8" />
                   <span className="font-bold font-headline">
                     M-MARKET PLUS SHOPPER
                   </span>
