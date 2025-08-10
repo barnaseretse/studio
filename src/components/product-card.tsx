@@ -13,13 +13,16 @@ import {
 import { Button } from '@/components/ui/button';
 import type { Product } from '@/types';
 import { toast } from '@/hooks/use-toast';
+import { useCart } from '@/hooks/use-cart';
 
 interface ProductCardProps {
   product: Product;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
+  const { addToCart } = useCart();
   const handleAddToCart = () => {
+    addToCart(product);
     toast({
       title: `${product.name} added to cart!`,
     });

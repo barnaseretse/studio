@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Menu } from 'lucide-react';
+import { Menu, ShoppingCart } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
@@ -13,8 +13,8 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
-import { DialogTitle } from '@radix-ui/react-dialog';
 import Logo from './logo';
+import { useCart } from '@/hooks/use-cart';
 
 const navLinks = [
   { href: '/', label: 'Marketplace' },
@@ -25,6 +25,7 @@ const navLinks = [
 
 export default function Header() {
   const pathname = usePathname();
+  const { cart } = useCart();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -51,7 +52,7 @@ export default function Header() {
             ))}
           </nav>
         </div>
-        <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
+        <div className="flex flex-1 items-center justify-end space-x-2">
           <div className="md:hidden">
             <Sheet>
               <SheetTrigger asChild>
@@ -61,7 +62,6 @@ export default function Header() {
                 </Button>
               </SheetTrigger>
               <SheetContent side="left">
-                <DialogTitle className="sr-only">Menu</DialogTitle>
                 <SheetHeader>
                   <SheetTitle className="sr-only">Menu</SheetTitle>
                 </SheetHeader>
@@ -88,7 +88,15 @@ export default function Header() {
               </SheetContent>
             </Sheet>
           </div>
-          <Button>Sign In</Button>
+          <div className="flex items-center gap-4">
+            <Button asChild>
+              <Link href="/checkout">
+                <ShoppingCart className="mr-2 h-4 w-4" />
+                <span>Cart ({cart.length})</span>
+              </Link>
+            </Button>
+            <Button variant="ghost">Sign In</Button>
+          </div>
         </div>
       </div>
     </header>
