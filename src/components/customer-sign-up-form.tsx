@@ -3,6 +3,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
+import { useRouter } from 'next/navigation';
+
 
 import { Button } from '@/components/ui/button';
 import {
@@ -55,6 +57,7 @@ const formSchema = z
   });
 
 export default function CustomerSignUpForm() {
+  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -70,10 +73,10 @@ export default function CustomerSignUpForm() {
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
     toast({
-      title: 'Registration Successful!',
-      description: 'Welcome to M-MARKET PLUS SHOPPER! You can now start shopping.',
+      title: 'Registration Submitted!',
+      description: 'Please verify your account to continue.',
     });
-    form.reset();
+    router.push('/auth/verify-otp?type=customer');
   }
 
   return (
@@ -195,7 +198,7 @@ export default function CustomerSignUpForm() {
               )}
             />
             <Button type="submit" size="lg" className="w-full">
-              Sign Up
+              Create Account
             </Button>
           </form>
         </Form>
