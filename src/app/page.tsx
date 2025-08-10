@@ -4,6 +4,7 @@ import {
   Package,
   ShoppingBasket,
   Users,
+  Star
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -113,7 +114,10 @@ export default function Home() {
         <section className="w-full py-20 md:py-32 lg:py-40 bg-gray-100/40 dark:bg-gray-800/40">
           <div className="container mx-auto px-4 md:px-6 text-center">
             <div className="max-w-3xl mx-auto">
-              <ShoppingBasket className="w-16 h-16 mx-auto text-primary" />
+              <div className="relative w-16 h-16 mx-auto">
+                <ShoppingBasket className="w-16 h-16 text-primary" />
+                <Star className="w-8 h-8 text-primary absolute -top-2 -right-2" />
+              </div>
               <h1 className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl mt-4">
                 M-MARKET PLUS SHOPPER
               </h1>
