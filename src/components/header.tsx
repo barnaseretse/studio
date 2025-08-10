@@ -95,7 +95,9 @@ export default function Header() {
                 <span>Cart ({cart.length})</span>
               </Link>
             </Button>
-            <Button variant="ghost">Sign In</Button>
+            <Button variant="outline" asChild>
+              <Link href="/auth">Sign In / Sign Up</Link>
+            </Button>
           </div>
         </div>
       </div>

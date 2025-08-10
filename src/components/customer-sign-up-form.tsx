@@ -33,51 +33,37 @@ import {
 
 const formSchema = z
   .object({
-    businessName: z.string().min(2, {
-      message: 'Business name must be at least 2 characters.',
-    }),
-    ownerName: z.string().min(2, {
-      message: 'Owner name must be at least 2 characters.',
+    fullName: z.string().min(2, {
+      message: 'Full name must be at least 2 characters.',
     }),
     mobileNumber: z.string().min(10, {
       message: 'Please enter a valid mobile number.',
     }),
-    email: z.string().email({ message: 'Please enter a valid email address.' }),
+    email: z.string().email().optional().or(z.literal('')),
     password: z.string().min(8, {
       message: 'Password must be at least 8 characters.',
     }),
     confirmPassword: z.string(),
-    businessAddress: z.string().min(10, {
-      message: 'Please enter a valid business address.',
+    deliveryAddress: z.string().min(10, {
+        message: 'Please enter a valid delivery address.'
     }),
-    businessCategory: z.string({
-      required_error: 'Please select a business category.',
-    }),
-    bankingDetails: z.string().min(10, {
-      message: 'Please enter valid banking details.',
-    }),
-    registrationNumber: z.string().min(2, {
-      message: 'Please enter a valid ID or Business Registration Number.',
-    }),
+    paymentMethod: z.string({ required_error: 'Please select a payment method.' }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
     path: ['confirmPassword'],
   });
 
-export default function SupplierRegistrationForm() {
+export default function CustomerSignUpForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      businessName: '',
-      ownerName: '',
+      fullName: '',
       mobileNumber: '',
       email: '',
       password: '',
       confirmPassword: '',
-      businessAddress: '',
-      bankingDetails: '',
-      registrationNumber: '',
+      deliveryAddress: '',
     },
   });
 
@@ -85,8 +71,7 @@ export default function SupplierRegistrationForm() {
     console.log(values);
     toast({
       title: 'Registration Successful!',
-      description:
-        "Welcome to M-MARKET PLUS SHOPPER! You can now post your products.",
+      description: 'Welcome to M-MARKET PLUS SHOPPER! You can now start shopping.',
     });
     form.reset();
   }
@@ -95,10 +80,10 @@ export default function SupplierRegistrationForm() {
     <Card className="w-full">
       <CardHeader>
         <CardTitle className="font-headline text-2xl">
-          Become a Supplier
+          Create a Customer Account
         </CardTitle>
         <CardDescription>
-          Join our marketplace and reach more customers in your community.
+          Sign up to start shopping for the best local products.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -106,23 +91,10 @@ export default function SupplierRegistrationForm() {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField
               control={form.control}
-              name="businessName"
+              name="fullName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Business/Shop Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="e.g., Green Valley Farms" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="ownerName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Owner's Full Name</FormLabel>
+                  <FormLabel>Full Name</FormLabel>
                   <FormControl>
                     <Input placeholder="John Doe" {...field} />
                   </FormControl>
@@ -139,7 +111,7 @@ export default function SupplierRegistrationForm() {
                   <FormControl>
                     <Input placeholder="0821234567" {...field} />
                   </FormControl>
-                  <FormDescription>Link to your WhatsApp Business.</FormDescription>
+                  <FormDescription>For WhatsApp & delivery updates.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -149,11 +121,11 @@ export default function SupplierRegistrationForm() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email Address</FormLabel>
+                  <FormLabel>Email Address (Optional)</FormLabel>
                   <FormControl>
                     <Input
                       type="email"
-                      placeholder="contact@yourbusiness.com"
+                      placeholder="you@example.com"
                       {...field}
                     />
                   </FormControl>
@@ -163,71 +135,35 @@ export default function SupplierRegistrationForm() {
             />
             <FormField
               control={form.control}
-              name="businessAddress"
+              name="deliveryAddress"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Business Address</FormLabel>
+                  <FormLabel>Delivery Address</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Street, Suburb, Town"
-                      {...field}
-                    />
+                    <Input placeholder="Street, Suburb, Town" {...field} />
                   </FormControl>
-                  <FormDescription>Used for order pickups.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <FormField
+             <FormField
               control={form.control}
-              name="businessCategory"
+              name="paymentMethod"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Category of Products</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
+                  <FormLabel>Preferred Payment Method</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a category" />
+                        <SelectValue placeholder="Select a payment method" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="groceries">Groceries</SelectItem>
-                      <SelectItem value="poultry">Poultry</SelectItem>
-                      <SelectItem value="clothes">Clothes</SelectItem>
-                      <SelectItem value="handmade">Handmade Goods</SelectItem>
-                       <SelectItem value="other">Other</SelectItem>
+                      <SelectItem value="cod">Cash on Delivery</SelectItem>
+                      <SelectItem value="eft">EFT</SelectItem>
+                      <SelectItem value="snapscan">SnapScan/Yoco</SelectItem>
                     </SelectContent>
                   </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-             <FormField
-              control={form.control}
-              name="bankingDetails"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Banking Details</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Bank, Account Number, Branch Code" {...field} />
-                  </FormControl>
-                  <FormDescription>For payments from orders.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-             <FormField
-              control={form.control}
-              name="registrationNumber"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>ID or Business Registration Number</FormLabel>
-                  <FormControl>
-                    <Input placeholder="For verification" {...field} />
-                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -259,7 +195,7 @@ export default function SupplierRegistrationForm() {
               )}
             />
             <Button type="submit" size="lg" className="w-full">
-              Register Business
+              Sign Up
             </Button>
           </form>
         </Form>
