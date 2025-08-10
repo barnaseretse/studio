@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button';
 import {
   Sheet,
   SheetContent,
+  SheetHeader,
+  SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
@@ -56,6 +58,9 @@ export default function Header() {
                 </Button>
               </SheetTrigger>
               <SheetContent side="left">
+                <SheetHeader>
+                  <SheetTitle className="sr-only">Menu</SheetTitle>
+                </SheetHeader>
                 <Link href="/" className="mr-6 flex items-center space-x-2 mb-6">
                   <ShoppingBasket className="h-6 w-6 text-primary" />
                   <span className="font-bold font-headline">ShopDrop</span>
