@@ -3,13 +3,12 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
-  projectId: 'shopdrop-jjq2e',
-  appId: '1:434276381669:web:59d80217e84ac39ecdb50c',
-  storageBucket: 'shopdrop-jjq2e.firebasestorage.app',
-  apiKey: 'AIzaSyDhGoD_k_LS_5hhxyomfiCJRq2Dxa2q-9o',
-  authDomain: 'shopdrop-jjq2e.firebaseapp.com',
-  measurementId: '',
-  messagingSenderId: '434276381669',
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
 // Initialize Firebase
