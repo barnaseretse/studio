@@ -1,8 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { Menu, ShoppingCart, Star } from 'lucide-react';
-import { usePathname } from 'next/navigation';
+import { Menu, ShoppingCart, User as UserIcon, LogOut } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -12,9 +12,21 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 import Logo from './logo';
 import { useCart } from '@/hooks/use-cart';
+import { useAuth } from '@/hooks/use-auth';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { toast } from '@/hooks/use-toast';
+import { auth } from '@/lib/firebase';
 
 const navLinks = [
   { href: '/', label: 'Marketplace' },
@@ -25,7 +37,34 @@ const navLinks = [
 
 export default function Header() {
   const pathname = usePathname();
+  const router = useRouter();
   const { cart } = useCart();
+  const { currentUser, loading } = useAuth();
+
+  const handleSignOut = async () => {
+    try {
+      await auth.signOut();
+      toast({
+        title: 'Signed Out',
+        description: 'You have been successfully signed out.',
+      });
+      router.push('/auth');
+    } catch (error) {
+      console.error('Sign out error:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to sign out. Please try again.',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const getInitials = (name: string = '') => {
+    return name
+      .split(' ')
+      .map((n) => n[0])
+      .join('');
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -94,6 +133,17 @@ export default function Header() {
                 {link.label}
               </Link>
             ))}
+             {currentUser?.role === 'Supplier' && (
+              <Link
+                href="/suppliers/dashboard"
+                className={cn(
+                  'transition-colors hover:text-primary',
+                  pathname === '/suppliers/dashboard' ? 'text-primary' : 'text-foreground/60'
+                )}
+              >
+                Dashboard
+              </Link>
+            )}
           </nav>
         </div>
         
@@ -112,9 +162,35 @@ export default function Header() {
                     <span>Cart ({cart.length})</span>
                 </Link>
                 </Button>
-                <Button variant="outline" asChild>
-                <Link href="/auth">Sign In / Sign Up</Link>
-                </Button>
+                
+                {loading ? null : currentUser ? (
+                   <DropdownMenu>
+                   <DropdownMenuTrigger asChild>
+                     <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                       <Avatar>
+                         <AvatarImage src={currentUser.photoURL || ''} alt={currentUser.fullName} />
+                         <AvatarFallback>{getInitials(currentUser.fullName)}</AvatarFallback>
+                       </Avatar>
+                     </Button>
+                   </DropdownMenuTrigger>
+                   <DropdownMenuContent className="w-56" align="end">
+                     <DropdownMenuLabel>
+                       <p>Signed in as</p>
+                       <p className='font-normal'>{currentUser.email}</p>
+                       </DropdownMenuLabel>
+                     <DropdownMenuSeparator />
+                     <DropdownMenuItem onClick={handleSignOut}>
+                       <LogOut className="mr-2 h-4 w-4" />
+                       <span>Sign out</span>
+                     </DropdownMenuItem>
+                   </DropdownMenuContent>
+                 </DropdownMenu>
+                ) : (
+                    <Button variant="outline" asChild>
+                        <Link href="/auth">Sign In / Sign Up</Link>
+                    </Button>
+                )}
+
             </div>
         </div>
 
