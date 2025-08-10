@@ -3,6 +3,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
+import { useRouter } from 'next/navigation';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -16,6 +18,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { toast } from '@/hooks/use-toast';
 import Link from 'next/link';
+import { auth } from '@/lib/firebase';
+import { useState } from 'react';
 
 const formSchema = z.object({
   emailOrPhone: z.string().min(1, {
@@ -27,6 +31,8 @@ const formSchema = z.object({
 });
 
 export default function SignInForm() {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -35,13 +41,31 @@ export default function SignInForm() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    toast({
-      title: 'Sign In Successful!',
-      description: 'Welcome back to M-Market + Shopper!',
-    });
-    form.reset();
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsLoading(true);
+    try {
+      // For now, we only support email sign-in.
+      // Phone number sign-in would require a different Firebase flow.
+      await signInWithEmailAndPassword(
+        auth,
+        values.emailOrPhone,
+        values.password
+      );
+      toast({
+        title: 'Sign In Successful!',
+        description: 'Welcome back to M-Market + Shopper!',
+      });
+      router.push('/');
+    } catch (error: any) {
+      console.error(error);
+      toast({
+        title: 'Sign In Failed',
+        description: error.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -54,7 +78,7 @@ export default function SignInForm() {
             <FormItem>
               <FormLabel>Email or Phone Number</FormLabel>
               <FormControl>
-                <Input placeholder="you@example.com or 0821234567" {...field} />
+                <Input placeholder="you@example.com" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -74,12 +98,17 @@ export default function SignInForm() {
           )}
         />
         <div className="flex items-center justify-between">
-            <Link href="#" className="text-sm text-primary hover:underline">
-                Forgot Password?
-            </Link>
+          <Link href="#" className="text-sm text-primary hover:underline">
+            Forgot Password?
+          </Link>
         </div>
-        <Button type="submit" size="lg" className="w-full">
-          Sign In
+        <Button
+          type="submit"
+          size="lg"
+          className="w-full"
+          disabled={isLoading}
+        >
+          {isLoading ? 'Signing In...' : 'Sign In'}
         </Button>
       </form>
     </Form>

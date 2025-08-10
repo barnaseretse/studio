@@ -4,12 +4,16 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { useRouter, useSearchParams } from 'next/navigation';
+import {
+  RecaptchaVerifier,
+  signInWithPhoneNumber,
+  ConfirmationResult,
+} from 'firebase/auth';
 
 import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -24,7 +28,8 @@ import {
   CardTitle,
   CardDescription,
 } from './ui/card';
-import { useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import { auth } from '@/lib/firebase';
 
 const formSchema = z.object({
   otp: z.string().min(6, {
@@ -36,7 +41,11 @@ export default function OtpForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const userType = searchParams.get('type') || 'customer';
+  const phone = searchParams.get('phone');
   const [isLoading, setIsLoading] = useState(false);
+  const [confirmationResult, setConfirmationResult] =
+    useState<ConfirmationResult | null>(null);
+  const recaptchaVerifierRef = useRef<RecaptchaVerifier | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -45,12 +54,47 @@ export default function OtpForm() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+  useEffect(() => {
+    if (phone && !recaptchaVerifierRef.current) {
+      const recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+        size: 'invisible',
+        callback: (response: any) => {
+          // reCAPTCHA solved, allow signInWithPhoneNumber.
+        },
+      });
+      recaptchaVerifierRef.current = recaptchaVerifier;
+
+      signInWithPhoneNumber(auth, `+${phone}`, recaptchaVerifier)
+        .then((result) => {
+          setConfirmationResult(result);
+          toast({
+            title: 'OTP Sent!',
+            description: 'A code has been sent to your phone.',
+          });
+        })
+        .catch((error) => {
+          console.error(error);
+          toast({
+            title: 'Failed to send OTP',
+            description: 'Please try again.',
+            variant: 'destructive',
+          });
+        });
+    }
+  }, [phone]);
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!confirmationResult) {
+      toast({
+        title: 'Verification failed',
+        description: 'No confirmation result found. Please try resending the OTP.',
+        variant: 'destructive',
+      });
+      return;
+    }
     setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      await confirmationResult.confirm(values.otp);
       toast({
         title: 'Verification Successful!',
         description: 'Your account has been verified.',
@@ -60,23 +104,49 @@ export default function OtpForm() {
       } else {
         router.push('/');
       }
-    }, 2000);
+    } catch (error: any) {
+      console.error(error);
+      toast({
+        title: 'Verification Failed',
+        description: 'The code you entered is incorrect. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   function onResend() {
-    toast({
-        title: 'OTP Resent!',
-        description: 'A new code has been sent to your phone and email.',
-      });
+     if (phone && recaptchaVerifierRef.current) {
+        signInWithPhoneNumber(auth, `+${phone}`, recaptchaVerifierRef.current)
+        .then((result) => {
+          setConfirmationResult(result);
+          toast({
+            title: 'OTP Resent!',
+            description: 'A new code has been sent to your phone.',
+          });
+        })
+        .catch((error) => {
+          console.error(error);
+          toast({
+            title: 'Failed to resend OTP',
+            description: 'Please try again.',
+            variant: 'destructive',
+          });
+        });
+     }
   }
+
 
   return (
     <Card className="w-full max-w-lg">
       <CardHeader>
-        <CardTitle className="font-headline text-2xl">Verify Your Account</CardTitle>
+        <CardTitle className="font-headline text-2xl">
+          Verify Your Phone Number
+        </CardTitle>
         <CardDescription>
-          We’ve sent a 6-digit code to your phone and email. Enter it below to
-          verify your account.
+          We’ve sent a 6-digit code to your phone. Enter it below to verify your
+          account.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -95,15 +165,21 @@ export default function OtpForm() {
                 </FormItem>
               )}
             />
-            <Button type="submit" size="lg" className="w-full" disabled={isLoading}>
+            <Button
+              type="submit"
+              size="lg"
+              className="w-full"
+              disabled={isLoading || !confirmationResult}
+            >
               {isLoading ? 'Verifying...' : 'Verify Account'}
             </Button>
           </form>
         </Form>
+        <div id="recaptcha-container" className="mt-4"></div>
         <div className="mt-4 text-center">
-            <Button variant="link" onClick={onResend}>
-                Didn't receive a code? Resend
-            </Button>
+          <Button variant="link" onClick={onResend} disabled={!phone}>
+            Didn't receive a code? Resend
+          </Button>
         </div>
       </CardContent>
     </Card>

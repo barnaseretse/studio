@@ -4,7 +4,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { useRouter } from 'next/navigation';
-
+import {
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+} from 'firebase/auth';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -32,26 +36,39 @@ import {
   CardTitle,
   CardDescription,
 } from './ui/card';
+import { auth, db } from '@/lib/firebase';
+import { useState } from 'react';
 
 const formSchema = z
   .object({
-    fullName: z.string().min(2, {
-      message: 'Full name must be at least 2 characters.',
-    }).max(50, { message: 'Full name must be less than 50 characters.'}),
-    mobileNumber: z.string().min(10, {
-      message: 'Please enter a valid mobile number.',
-    }).max(15, { message: 'Please enter a valid mobile number.'}),
+    fullName: z
+      .string()
+      .min(2, {
+        message: 'Full name must be at least 2 characters.',
+      })
+      .max(50, { message: 'Full name must be less than 50 characters.' }),
+    mobileNumber: z
+      .string()
+      .min(10, {
+        message: 'Please enter a valid mobile number.',
+      })
+      .max(15, { message: 'Please enter a valid mobile number.' }),
     email: z.string().email({ message: 'Please enter a valid email address.' }),
-    password: z.string().min(8, {
-      message: 'Password must be at least 8 characters.',
-    }).regex(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/, {
-        message: "Password must contain at least one letter and one number."
-    }),
+    password: z
+      .string()
+      .min(8, {
+        message: 'Password must be at least 8 characters.',
+      })
+      .regex(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/, {
+        message: 'Password must contain at least one letter and one number.',
+      }),
     confirmPassword: z.string(),
     deliveryAddress: z.string().min(10, {
-        message: 'Please enter a valid delivery address.'
+      message: 'Please enter a valid delivery address.',
     }),
-    paymentMethod: z.string({ required_error: 'Please select a payment method.' }),
+    paymentMethod: z.string({
+      required_error: 'Please select a payment method.',
+    }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
@@ -60,6 +77,7 @@ const formSchema = z
 
 export default function CustomerSignUpForm() {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -72,13 +90,44 @@ export default function CustomerSignUpForm() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    toast({
-      title: 'Registration Submitted!',
-      description: 'Please verify your account to continue.',
-    });
-    router.push('/auth/verify-otp?type=customer');
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsLoading(true);
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        values.email,
+        values.password
+      );
+      const user = userCredential.user;
+
+      await sendEmailVerification(user);
+
+      await setDoc(doc(db, 'users', user.uid), {
+        fullName: values.fullName,
+        email: values.email,
+        phone: values.mobileNumber,
+        role: 'Buyer',
+        deliveryAddress: values.deliveryAddress,
+        preferredPaymentMethod: values.paymentMethod,
+        createdAt: serverTimestamp(),
+      });
+
+      toast({
+        title: 'Registration Submitted!',
+        description:
+          'Please check your email to verify your account, then verify your phone number.',
+      });
+      router.push(`/auth/verify-otp?type=customer&phone=${values.mobileNumber}`);
+    } catch (error: any) {
+      console.error(error);
+      toast({
+        title: 'Registration Failed',
+        description: error.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -116,7 +165,9 @@ export default function CustomerSignUpForm() {
                   <FormControl>
                     <Input placeholder="0821234567" {...field} />
                   </FormControl>
-                  <FormDescription>For WhatsApp & delivery updates.</FormDescription>
+                  <FormDescription>
+                    For WhatsApp & delivery updates.
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -151,13 +202,16 @@ export default function CustomerSignUpForm() {
                 </FormItem>
               )}
             />
-             <FormField
+            <FormField
               control={form.control}
               name="paymentMethod"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Preferred Payment Method</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select a payment method" />
@@ -199,8 +253,13 @@ export default function CustomerSignUpForm() {
                 </FormItem>
               )}
             />
-            <Button type="submit" size="lg" className="w-full">
-              Create Account
+            <Button
+              type="submit"
+              size="lg"
+              className="w-full"
+              disabled={isLoading}
+            >
+              {isLoading ? 'Creating Account...' : 'Create Account'}
             </Button>
           </form>
         </Form>
