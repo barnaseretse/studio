@@ -34,7 +34,7 @@ const formSchema = z.object({
   }),
   budget: z.coerce
     .number()
-    .min(10, { message: 'Budget must be at least $10.' }),
+    .min(100, { message: 'Budget must be at least R100.' }),
 });
 
 export default function PersonalShopperForm() {
@@ -101,7 +101,7 @@ export default function PersonalShopperForm() {
                 <FormItem>
                   <FormLabel>Preferred Stores</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., Whole Foods, Target" {...field} />
+                    <Input placeholder="e.g., Woolworths, Checkers" {...field} />
                   </FormControl>
                   <FormDescription>
                     List the stores you'd like us to shop at.
@@ -132,9 +132,9 @@ export default function PersonalShopperForm() {
               name="budget"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Shopping Budget ($)</FormLabel>
+                  <FormLabel>Shopping Budget (ZAR)</FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder="150" {...field} />
+                    <Input type="number" placeholder="1500" {...field} />
                   </FormControl>
                   <FormDescription>
                     This is the estimated cost for your items.

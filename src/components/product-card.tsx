@@ -47,7 +47,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       <CardContent className="p-4 pt-0 flex-grow">
         <div className="flex items-baseline gap-2">
           <p className="text-2xl font-bold text-primary">
-            ${product.price.toFixed(2)}
+            R{product.price.toFixed(2)}
           </p>
           <p className="text-muted-foreground">/ {product.unit}</p>
         </div>
