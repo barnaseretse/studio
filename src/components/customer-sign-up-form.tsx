@@ -37,13 +37,15 @@ const formSchema = z
   .object({
     fullName: z.string().min(2, {
       message: 'Full name must be at least 2 characters.',
-    }),
+    }).max(50, { message: 'Full name must be less than 50 characters.'}),
     mobileNumber: z.string().min(10, {
       message: 'Please enter a valid mobile number.',
-    }),
-    email: z.string().email().optional().or(z.literal('')),
+    }).max(15, { message: 'Please enter a valid mobile number.'}),
+    email: z.string().email({ message: 'Please enter a valid email address.' }),
     password: z.string().min(8, {
       message: 'Password must be at least 8 characters.',
+    }).regex(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/, {
+        message: "Password must contain at least one letter and one number."
     }),
     confirmPassword: z.string(),
     deliveryAddress: z.string().min(10, {
@@ -124,7 +126,7 @@ export default function CustomerSignUpForm() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email Address (Optional)</FormLabel>
+                  <FormLabel>Email Address</FormLabel>
                   <FormControl>
                     <Input
                       type="email"

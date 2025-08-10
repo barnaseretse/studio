@@ -36,16 +36,18 @@ const formSchema = z
   .object({
     businessName: z.string().min(2, {
       message: 'Business name must be at least 2 characters.',
-    }),
+    }).max(50, { message: 'Business name must be less than 50 characters.'}),
     ownerName: z.string().min(2, {
       message: 'Owner name must be at least 2 characters.',
     }),
     mobileNumber: z.string().min(10, {
       message: 'Please enter a valid mobile number.',
-    }),
+    }).max(15, { message: 'Please enter a valid mobile number.'}),
     email: z.string().email({ message: 'Please enter a valid email address.' }),
     password: z.string().min(8, {
       message: 'Password must be at least 8 characters.',
+    }).regex(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/, {
+        message: "Password must contain at least one letter and one number."
     }),
     confirmPassword: z.string(),
     businessAddress: z.string().min(10, {
