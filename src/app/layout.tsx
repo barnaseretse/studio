@@ -6,7 +6,7 @@ import Header from '@/components/header';
 import Footer from '@/components/footer';
 
 export const metadata: Metadata = {
-  title: 'ShopDrop',
+  title: 'M-MARKET PLUS SHOPPER',
   description: 'Your personal shopper and local market, delivered.',
 };
 

@@ -115,7 +115,7 @@ export default function Home() {
             <div className="max-w-3xl mx-auto">
               <ShoppingBasket className="w-16 h-16 mx-auto text-primary" />
               <h1 className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl mt-4">
-                ShopDrop
+                M-MARKET PLUS SHOPPER
               </h1>
               <p className="mt-4 text-lg text-muted-foreground md:text-xl">
                 Your personal shopper and local market, delivered right to your

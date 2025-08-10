@@ -13,6 +13,7 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
+import { DialogTitle } from '@radix-ui/react-dialog';
 
 const navLinks = [
   { href: '/', label: 'Marketplace' },
@@ -30,7 +31,7 @@ export default function Header() {
           <Link href="/" className="mr-6 flex items-center space-x-2">
             <ShoppingBasket className="h-6 w-6 text-primary" />
             <span className="hidden font-bold sm:inline-block font-headline">
-              ShopDrop
+              M-MARKET PLUS SHOPPER
             </span>
           </Link>
           <nav className="flex items-center space-x-6 text-sm font-medium">
@@ -58,12 +59,15 @@ export default function Header() {
                 </Button>
               </SheetTrigger>
               <SheetContent side="left">
+                <DialogTitle className="sr-only">Menu</DialogTitle>
                 <SheetHeader>
                   <SheetTitle className="sr-only">Menu</SheetTitle>
                 </SheetHeader>
                 <Link href="/" className="mr-6 flex items-center space-x-2 mb-6">
                   <ShoppingBasket className="h-6 w-6 text-primary" />
-                  <span className="font-bold font-headline">ShopDrop</span>
+                  <span className="font-bold font-headline">
+                    M-MARKET PLUS SHOPPER
+                  </span>
                 </Link>
                 <nav className="flex flex-col space-y-4">
                   {navLinks.map((link) => (
