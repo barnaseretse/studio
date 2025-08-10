@@ -11,24 +11,23 @@ const Logo: React.FC<LogoProps> = ({ className, ...props }) => {
       className={cn('h-10 w-10', className)}
       {...props}
     >
+      {/* Trolley handle and base */}
       <g fill="hsl(var(--primary))">
-        {/* Hat */}
-        <path d="M11 14 C15 12, 25 12, 29 14 L 27 18 L 13 18 Z" />
-        <rect x="10" y="14" width="20" height="2" rx="1" />
-        {/* Head */}
-        <circle cx="20" cy="22" r="5" />
-        {/* Body */}
-        <rect x="15" y="27" width="10" height="10" rx="2" />
-        {/* Arm */}
-        <rect x="25" y="27" width="5" height="2" rx="1" />
+        <rect x="5" y="5" width="2" height="25" rx="1" />
+        <rect x="5" y="28" width="30" height="2" rx="1" />
       </g>
-      {/* Basket */}
+      {/* Trolley basket */}
       <g fill="hsl(var(--secondary))">
-        <path d="M28 29 L 30 37 L 38 37 L 36 29 Z" />
+        <path d="M7 5 L12 5 L 15 25 L 34 25 L 36 10 L 14 10 Z" />
+      </g>
+      {/* Wheels */}
+      <g fill="hsl(var(--primary))">
+        <circle cx="15" cy="34" r="3" />
+        <circle cx="32" cy="34" r="3" />
       </g>
       {/* Star */}
       <polygon
-        points="33,31 34,33 36,33 34.5,34 35,36 33,35 31,36 31.5,34 30,33 32,33"
+        points="22,13 23.5,16 26.5,16 24.5,18 25.5,21 22,19.5 18.5,21 19.5,18 17.5,16 20.5,16"
         fill="hsl(var(--accent))"
       />
     </svg>
