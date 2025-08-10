@@ -5,7 +5,7 @@ export interface User {
 export interface Product {
   id: string;
   name: string;
-  category: 'Fresh Produce' | 'Bakery' | 'Dairy & Eggs' | 'Meats';
+  category: 'Fresh Produce' | 'Bakery' | 'Dairy & Eggs' | 'Meats' | 'Groceries';
   price: number;
   unit: string;
   supplier: string;

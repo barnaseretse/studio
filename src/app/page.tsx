@@ -98,6 +98,16 @@ const products: Product[] = [
     imageUrl: 'https://placehold.co/600x400.png',
     aiHint: 'raw chicken',
   },
+  {
+    id: '9',
+    name: 'Eezee Noodles 40 Pack (Mixed Flavour)',
+    category: 'Groceries',
+    price: 180.00,
+    unit: 'box',
+    supplier: 'Noodle King',
+    imageUrl: 'https://placehold.co/600x400.png',
+    aiHint: 'instant noodles',
+  },
 ];
 
 const categories = [
@@ -105,6 +115,7 @@ const categories = [
   'Bakery',
   'Dairy & Eggs',
   'Meats',
+  'Groceries',
 ];
 
 export default function Home() {
@@ -188,7 +199,7 @@ export default function Home() {
               Explore Local Products
             </h2>
             <Tabs defaultValue="Fresh Produce" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 mb-8">
+              <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 mb-8">
                 {categories.map((category) => (
                   <TabsTrigger key={category} value={category}>
                     {category}
