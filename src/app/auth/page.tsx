@@ -24,7 +24,7 @@ export default function AuthPage() {
             <CardHeader>
               <CardTitle>Sign In</CardTitle>
               <CardDescription>
-                Access your M-MARKET PLUS SHOPPER account.
+                Access your M-Market + Shopper account.
               </CardDescription>
             </CardHeader>
             <CardContent>

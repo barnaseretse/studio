@@ -7,7 +7,7 @@ import Footer from '@/components/footer';
 import { CartProvider } from '@/context/cart-context';
 
 export const metadata: Metadata = {
-  title: 'M-MARKET PLUS SHOPPER',
+  title: 'M-Market + Shopper',
   description: 'Your personal shopper and local market, delivered.',
 };
 

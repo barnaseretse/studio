@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Menu, ShoppingCart } from 'lucide-react';
+import { Menu, ShoppingCart, Star } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
@@ -30,7 +30,6 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center">
-        {/* Mobile Menu Trigger (Top-left) */}
         <div className="md:hidden">
           <Sheet>
             <SheetTrigger asChild>
@@ -46,7 +45,7 @@ export default function Header() {
               <Link href="/" className="mr-6 flex items-center space-x-2 mb-6">
                 <Logo className="h-8 w-8" />
                 <span className="font-bold font-headline">
-                  M-MARKET PLUS SHOPPER
+                  M-Market + Shopper
                 </span>
               </Link>
               <nav className="flex flex-col space-y-4">
@@ -74,7 +73,7 @@ export default function Header() {
           <Link href="/" className="mr-6 flex items-center space-x-2">
             <Logo className="h-8 w-8" />
             <span className="hidden font-bold sm:inline-block font-headline">
-              M-MARKET PLUS SHOPPER
+              M-Market + Shopper
             </span>
           </Link>
           <nav className="flex items-center space-x-6 text-sm font-medium">

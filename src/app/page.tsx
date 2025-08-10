@@ -116,7 +116,7 @@ export default function Home() {
             <div className="max-w-3xl mx-auto">
               <Logo className="w-24 h-24 mx-auto" />
               <h1 className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl mt-4">
-                M-MARKET PLUS SHOPPER
+                M-Market + Shopper
               </h1>
               <p className="mt-4 text-lg text-muted-foreground md:text-xl">
                 Your personal shopper and local market, delivered right to your
